@@ -12,5 +12,3 @@ port = os.environ['METRICS_SERVICE_PORT']
 url = f"http://{host}:{port}/collect"
 
 requests.post(url, data={"start": t})
-
-raise Exception("muahahahaha")
