@@ -1,0 +1,19 @@
+<!doctype html>
+<h1>Active pods</h1>
+
+<table>
+    <thead>
+        <tr>
+            <th>Pod ID</th>
+            <th>Heartbeat time</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for pod in active_pods %}
+        <tr>
+            <td>{{pod[0]}}</td>
+            <td>{{pod[1]}}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>

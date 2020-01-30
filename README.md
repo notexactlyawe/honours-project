@@ -9,3 +9,7 @@ Each folder within this top level contains a specific experiment to do with this
 ### `replication_controller`
 
 This folder contains code that attempts to measure the time it takes for each loop of the replication controller in Kubernetes to run. It does this by measuring the time it takes to restart a Python script that keeps killing itself.
+
+### `hpa_controller`
+
+The Horizontal Pod Autoscaler (HPA) is a kubernetes controller that will create/destroy pods based on their CPU usage. This experiment aims to detect the time it takes for the HPA to run its control loop by measuring the time it takes for a new pod to be created/old pod to die. By measuring this, hopefully information about the Kubernetes cluster that wasn't otherwise available will be revealed.

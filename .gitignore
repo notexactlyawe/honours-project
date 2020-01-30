@@ -3,4 +3,6 @@ free5GC-docker/
 *.un~
 *.swo
 *.swp
-*/__pycache__/
+__pycache__/
+venv/
+*.db
