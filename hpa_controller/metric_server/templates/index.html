@@ -4,15 +4,15 @@
 <table>
     <thead>
         <tr>
-            <th>Pod ID</th>
-            <th>Heartbeat time</th>
+            <th>Time</th>
+            <th>Cycle time</th>
         </tr>
     </thead>
     <tbody>
-        {% for pod in active_pods %}
+        {% for time in times %}
         <tr>
-            <td>{{pod[0]}}</td>
-            <td>{{pod[1]}}</td>
+            <td>{{time[0]}}</td>
+            <td>{{time[1]}}</td>
         </tr>
         {% endfor %}
     </tbody>

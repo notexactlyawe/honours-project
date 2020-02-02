@@ -6,4 +6,31 @@ The aim of the two applications is to cause some state to change every iteration
 
 ## Getting started
 
-TBD
+Open three terminals. The first will be to run the `metric_server` and the other two will run `busy_worker`s. If desired, a fourth terminal with `top` can also be used to see the CPU usage of each `busy_worker`. The below commands assume that you are running in a Python 3.8 environment with the requirements from the respective directories' `requirements.txt` installed.
+
+``` sh
+# Terminal 1 - start metric-server
+# set cpu target for HPA controller
+export K8s_CPU_TARGET="0.3"
+
+# start server
+cd metric_server
+python app.py
+
+##################
+# Terminal 2/3
+# set address of metric_server
+export METRICS_SERVICE_HOST=localhost
+export METRICS_SERVICE_PORT=5000
+
+# start busy_worker
+cd busy_worker
+python worker.py
+
+##################
+# Terminal 4 (optional)
+# run top to view CPU usage of pods
+top
+```
+
+After starting these workers up, you will see that stopping them and restarting them will change the CPU that each of them use.
