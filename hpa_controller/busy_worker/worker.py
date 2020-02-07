@@ -10,8 +10,8 @@ import signal
 
 HEARTBEAT_PERIOD = 3 #s
 
-host = os.environ['METRICS_SERVICE_HOST']
-port = os.environ['METRICS_SERVICE_PORT']
+host = os.environ['CPUCONTROL_SERVICE_HOST']
+port = os.environ['CPUCONTROL_SERVICE_PORT']
 
 startup_url = f"http://{host}:{port}/startup"
 heartbeat_url = f"http://{host}:{port}/heartbeat"
