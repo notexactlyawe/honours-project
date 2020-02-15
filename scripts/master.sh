@@ -21,9 +21,9 @@ mkdir -p $KUBEHOME && cd $KUBEHOME
 # TODO this file isn't in the tarball (confusion)
 export KUBECONFIG=$KUBEHOME/admin.conf
 
-# TODO do we need to clone this?
 cd $WORKINGDIR
-git clone git@gitlab.flux.utah.edu:licai/emulab-profile.git
+# Don't think we need to clone this
+#git clone git@gitlab.flux.utah.edu:licai/emulab-profile.git
 # Install sock shop?
 #pushd $KUBEHOME
 #git clone https://github.com/microservices-demo/microservices-demo

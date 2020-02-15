@@ -104,6 +104,8 @@ request.addTour(tour)
 # Node kube-server
 if params.useVMs:
     kube_m = request.XenVM('m')
+    kube_m.cores = 4
+    kube_m.ram = 1024 * 8
 else:
     kube_m = request.RawPC('m')
     kube_m.hardware_type = 'd430'
@@ -117,6 +119,8 @@ slave_ifaces = []
 for i in range(1,params.computeNodeCount+1):
     if params.useVMs:
         kube_s = request.XenVM('s'+str(i))
+        kube_s.cores = 4
+        kube_s.ram = 1024 * 8
     else:
         kube_s = request.RawPC('s'+str(i))
         kube_s.hardware_type = 'd430'
