@@ -69,6 +69,13 @@ sudo kubeadm init --pod-network-cidr=192.168.0.0/16
 
 # result will be like:  kubeadm join 155.98.36.111:6443 --token i0peso.pzk3vriw1iz06ruj --discovery-token-ca-cert-hash sha256:19c5fdee6189106f9cb5b622872fe4ac378f275a9d2d2b6de936848215847b98
 
+# allow sN to log in with shared key
+# see http://docs.powderwireless.net/advanced-topics.html
+geni-get key > $HOME/.ssh/id_rsa
+chmod 600 $HOME/.ssh/id_rsa
+ssh-keygen -y -f $HOME/.ssh/id_rsa > $HOME/.ssh/id_rsa.pub
+grep -q -f $HOME/.ssh/id_rsa.pub $HOME/.ssh/authorized_keys || cat $HOME/.ssh/id_rsa.pub >> $HOME/.ssh/authorized_keys
+
 # https://github.com/kubernetes/kubernetes/issues/44665
 sudo cp /etc/kubernetes/admin.conf $KUBEHOME/
 sudo chown ${username}:${usergid} $KUBEHOME/admin.conf
@@ -118,47 +125,25 @@ source <(helm completion bash)
 helm install stable/metrics-server --name metrics-server --namespace metrics
 
 # Wait till the slave nodes get joined and update the kubelet daemon successfully
-nodes=(`ssh -o StrictHostKeyChecking=no ${username}@ops.emulab.net "{ /usr/testbed/bin/node_list -p -e ${projectid},${experimentid}; }"`)
-node_cnt=${#nodes[@]}
+node_cnt=$(/local/repository/scripts/geni-get-param computeNodeCount)
 joined_cnt=$(( `kubectl get nodes |wc -l` - 1 ))
+echo "Total nodes: ${node_cnt} Joined: ${joined_cnt}"
 while [ $node_cnt -ne $joined_cnt ]
 do 
     joined_cnt=$(( `kubectl get nodes |wc -l` - 1 ))
     sleep 1
 done
+echo "All nodes joined"
 
 # install experiment deployments
 kubectl apply -f $DEPLOY_CONFIG
 
-# install microservices app
-#kubectl apply -f  ${WORKINGDIR}/emulab-profile/private-profiles/kubernetes/microservices-yaml/manifests/sock-shop-ns.yaml 
-#sleep 5s
-#kubectl apply -f  ${WORKINGDIR}/emulab-profile/private-profiles/kubernetes/microservices-yaml/manifests
-#sleep 5s
-#kubectl apply -f  ${WORKINGDIR}/emulab-profile/private-profiles/kubernetes/microservices-yaml/manifests-jaeger
-
-#$ kubectl get endpoints --all-namespaces |grep jaeger-query|awk '{print $3}'
-#192.168.1.14:16686
-#$ kubectl get endpoints --all-namespaces |grep front-end|awk '{print $3}'
-#192.168.1.5:8079
-#$ kubectl get endpoints --all-namespaces |grep dashboard|awk '{print $3}'
-#192.168.0.2:8443
-#jaeger_access=`kubectl get endpoints -n jaeger  -o go-template='{{range .items}}{{if eq .metadata.name "jaeger-query"}} {{index .subsets 0 "addresses" 0 "ip" }}|{{index .subsets 0 "ports" 0 "port"}} {{end}}{{end}}' | tr "|" ":"`
-
-#jaeger_endpoint=`kubectl get endpoints --all-namespaces |grep jaeger-query|awk '{print $3}'`
-#sockshop_endpoint=`kubectl get endpoints --all-namespaces |grep front-end|awk '{print $3}'`
 dashboard_endpoint=`kubectl get endpoints --all-namespaces |grep dashboard|awk '{print $3}'`
 dashboard_credential=`kubectl -n kube-system describe secret $(kubectl -n kube-system get secret | grep admin-user | awk '{print $1}') |grep token: | awk '{print $2}'`
-#jaeger_port=`kubectl --namespace=jaeger get svc -o go-template='{{range .items}}{{if eq .metadata.name "jaeger-query"}}{{index .spec.ports 0 "nodePort"}}{{"\n"}}{{end}}{{end}}'`
 
 echo "Kubernetes is ready at: http://localhost:8001/api/v1/namespaces/kube-system/services/https:kubernetes-dashboard:/proxy/#!/login"
-#echo "sockshop will be ready in 5 minutes at: http://localhost:30001"
-#echo "jaeger will be ready in 5 minutes at: http://localhost:${jaeger_port}"
 
 # optional address
-#echo "Or, another access option (jaeger's localhost port does not work on my windows port forwarding somehow)"
-#echo "Jaeger endpoint: $jaeger_endpoint"
-#echo "sockshop endpoint: $sockshop_endpoint"
 echo "kubernetes dashboard endpoint: $dashboard_endpoint"
 # dashboard credential
 echo "And this is the dashboard credential: $dashboard_credential"
