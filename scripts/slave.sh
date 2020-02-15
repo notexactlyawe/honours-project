@@ -5,7 +5,7 @@
 SCRIPTDIR=$(dirname "$0")
 WORKINGDIR='/local/repository'
 username=$(id -u)
-HOME='/users/${username}'
+HOME=/users/$(id -un)
 usergid=$(id -g)
 
 sudo chown ${username}:${usergid} ${WORKINGDIR}/ -R

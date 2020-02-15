@@ -5,7 +5,7 @@
 SCRIPTDIR=$(dirname "$0")
 WORKINGDIR='/local/repository'
 username=$(id -nu)
-HOME='/users/${username}'
+HOME=/users/$(id -un)
 usergid=$(id -ng)
 experimentid=$(hostname|cut -d '.' -f 2)
 projectid=$usergid
@@ -63,7 +63,6 @@ sudo apt-get -y install docker-ce docker-ce-cli containerd.io
 sudo apt-get -y install kubelet kubeadm kubectl kubernetes-cni golang-go jq
 
 sudo docker version
-sudo docker run hello-world
 sudo swapoff -a
 sudo kubeadm init --pod-network-cidr=192.168.0.0/16
 

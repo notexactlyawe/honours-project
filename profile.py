@@ -72,7 +72,6 @@ import geni.rspec.igext as IG
 import geni.rspec.pg as RSpec
 
 # TODO: Is 12GB enough storage?
-# TODO: Write master/slave scripts
 
 ##################### Unneeded? #########################
 # bs0 = kube_m.Blockstore('bs0', '/mnt/extra')
@@ -91,7 +90,7 @@ pc = portal.Context()
 # leared this from: https://www.emulab.net/portal/show-profile.php?uuid=f6600ffd-e5a7-11e7-b179-90e2ba22fee4
 pc.defineParameter("computeNodeCount", "Number of slave/compute nodes",
                    portal.ParameterType.INTEGER, 1)
-pc.defineParameter("useVMs", "Whether to use virtual machines or raw PCs",
+pc.defineParameter("useVMs", "Use virtual machines (true) or raw PCs (false)",
                    portal.ParameterType.BOOLEAN, True)
 params = pc.bindParameters()
 
