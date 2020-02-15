@@ -20,7 +20,7 @@ curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key add
 echo "deb http://apt.kubernetes.io/ kubernetes-xenial main" | sudo tee -a /etc/apt/sources.list.d/kubernetes.list
 
 cd $WORKINGDIR
-git clone git@gitlab.flux.utah.edu:licai/deepstitch.git
+#git clone git@gitlab.flux.utah.edu:licai/deepstitch.git
 
 sudo apt-get update
 sudo apt-get -y install build-essential libffi-dev python python-dev  \
