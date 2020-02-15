@@ -31,18 +31,20 @@ cd $WORKINGDIR
 
 # install kubernetes
 curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key add
-sudo apt-add-repository "deb http://apt.kubernetes.io/ kubernetes-xenial main"
-echo "deb http://apt.kubernetes.io/ kubernetes-xenial main" | sudo tee -a /etc/apt/sources.list.d/kubernetes.list
-#sudo apt-add-repository "deb http://apt.kubernetes.io/ kubernetes-bionic main"
-#echo "deb http://apt.kubernetes.io/ kubernetes-bionic main" | sudo tee -a /etc/apt/sources.list.d/kubernetes.list
+#sudo apt-add-repository "deb http://apt.kubernetes.io/ kubernetes-xenial main"
+#echo "deb http://apt.kubernetes.io/ kubernetes-xenial main" | sudo tee -a /etc/apt/sources.list.d/kubernetes.list
+sudo apt-add-repository "deb http://apt.kubernetes.io/ kubernetes-bionic main"
+echo "deb http://apt.kubernetes.io/ kubernetes-bionic main" | sudo tee -a /etc/apt/sources.list.d/kubernetes.list
 sudo apt-get update
 sudo apt-get -y install build-essential libffi-dev python python-dev  \
 python-pip automake autoconf libtool indent vim tmux ctags
 
 # learn from this: https://blog.csdn.net/yan234280533/article/details/75136630
 # more info should see: https://kubernetes.io/docs/setup/independent/create-cluster-kubeadm/
-sudo apt-get -y install  docker-engine kubelet kubeadm kubectl kubernetes-cni golang-go jq
+sudo apt-get -y install  docker-ce kubelet kubeadm kubectl kubernetes-cni golang-go jq
+
 sudo docker version
+sudo docker run hello-world
 sudo swapoff -a
 sudo kubeadm init --pod-network-cidr=192.168.0.0/16
 

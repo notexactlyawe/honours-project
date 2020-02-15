@@ -17,7 +17,7 @@ mkdir -p $KUBEHOME && cd $KUBEHOME
 export KUBECONFIG=$KUBEHOME/admin.conf
 
 curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key add
-echo "deb http://apt.kubernetes.io/ kubernetes-xenial main" | sudo tee -a /etc/apt/sources.list.d/kubernetes.list
+echo "deb http://apt.kubernetes.io/ kubernetes-bionic main" | sudo tee -a /etc/apt/sources.list.d/kubernetes.list
 
 cd $WORKINGDIR
 #git clone git@gitlab.flux.utah.edu:licai/deepstitch.git
@@ -27,7 +27,7 @@ sudo apt-get -y install build-essential libffi-dev python python-dev  \
 python-pip automake autoconf libtool indent vim tmux jq
 
 # learn from this: https://blog.csdn.net/yan234280533/article/details/75136630
-sudo apt-get -y install  docker-engine kubelet kubeadm kubectl kubernetes-cni golang-go jq
+sudo apt-get -y install  docker-ce kubelet kubeadm kubectl kubernetes-cni golang-go jq
 sudo docker version
 sudo swapoff -a
 

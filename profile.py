@@ -113,8 +113,8 @@ if params.useVMs:
 else:
     kube_m = request.RawPC('m')
     kube_m.hardware_type = 'd430'
-kube_m.disk_image = 'urn:publicid:IDN+emulab.net+image+emulab-ops:UBUNTU16-64-STD'
-#kube_m.disk_image = 'urn:publicid:IDN+emulab.net+image+emulab-ops:UBUNTU18-64-STD'
+# kube_m.disk_image = 'urn:publicid:IDN+emulab.net+image+emulab-ops:UBUNTU16-64-STD'
+kube_m.disk_image = 'urn:publicid:IDN+emulab.net+image+emulab-ops:UBUNTU18-64-STD'
 kube_m.Site('Site 1')
 iface0 = kube_m.addInterface('interface-0')
 kube_m.addService(pg.Install('https://github.com/notexactlyawe/honours-project/archive/master.tar.gz', '/local/'))
@@ -129,8 +129,8 @@ for i in range(1,params.computeNodeCount+1):
     else:
         kube_s = request.RawPC('s'+str(i))
         kube_s.hardware_type = 'd430'
-    kube_s.disk_image = 'urn:publicid:IDN+emulab.net+image+emulab-ops:UBUNTU16-64-STD'
-    #kube_s.disk_image = 'urn:publicid:IDN+emulab.net+image+emulab-ops:UBUNTU18-64-STD'
+    # kube_s.disk_image = 'urn:publicid:IDN+emulab.net+image+emulab-ops:UBUNTU16-64-STD'
+    kube_s.disk_image = 'urn:publicid:IDN+emulab.net+image+emulab-ops:UBUNTU18-64-STD'
     kube_s.Site('Site 1')
     slave_ifaces.append(kube_s.addInterface('interface-'+str(i)))
     kube_s.addService(pg.Install('https://github.com/notexactlyawe/honours-project/archive/master.tar.gz', '/local/'))
