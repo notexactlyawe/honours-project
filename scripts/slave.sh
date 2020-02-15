@@ -26,8 +26,27 @@ sudo apt-get update
 sudo apt-get -y install build-essential libffi-dev python python-dev  \
 python-pip automake autoconf libtool indent vim tmux jq
 
+# pre-reqs for installing docker
+sudo apt-get -y install \
+    apt-transport-https \
+    ca-certificates \
+    curl \
+    gnupg-agent \
+    software-properties-common
+
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+
+sudo add-apt-repository \
+   "deb [arch=amd64] https://download.docker.com/linux/ubuntu \
+   $(lsb_release -cs) \
+   stable"
+
+# docker
+sudo apt-get -y install docker-ce docker-ce-cli containerd.io
+
 # learn from this: https://blog.csdn.net/yan234280533/article/details/75136630
-sudo apt-get -y install  docker-ce kubelet kubeadm kubectl kubernetes-cni golang-go jq
+# more info should see: https://kubernetes.io/docs/setup/independent/create-cluster-kubeadm/
+sudo apt-get -y install kubelet kubeadm kubectl kubernetes-cni golang-go jq
 sudo docker version
 sudo swapoff -a
 
