@@ -117,7 +117,7 @@ kube_m.disk_image = 'urn:publicid:IDN+emulab.net+image+emulab-ops:UBUNTU16-64-ST
 #kube_m.disk_image = 'urn:publicid:IDN+emulab.net+image+emulab-ops:UBUNTU18-64-STD'
 kube_m.Site('Site 1')
 iface0 = kube_m.addInterface('interface-0')
-kube_m.addService(pg.Install('https://codeload.github.com/notexactlyawe/honours-project/legacy.tar.gz/master', '/local/honours-project/'))
+kube_m.addService(pg.Install('https://github.com/notexactlyawe/honours-project/archive/master.tar.gz', '/local/honours-project/'))
 kube_m.addService(pg.Execute(shell="bash", command="/local/honours-project/scripts/master.sh"))
 
 slave_ifaces = []
@@ -133,7 +133,7 @@ for i in range(1,params.computeNodeCount+1):
     #kube_s.disk_image = 'urn:publicid:IDN+emulab.net+image+emulab-ops:UBUNTU18-64-STD'
     kube_s.Site('Site 1')
     slave_ifaces.append(kube_s.addInterface('interface-'+str(i)))
-    kube_s.addService(pg.Install('https://codeload.github.com/notexactlyawe/honours-project/legacy.tar.gz/master', '/local/honours-project/'))
+    kube_s.addService(pg.Install('https://github.com/notexactlyawe/honours-project/archive/master.tar.gz', '/local/honours-project/'))
     kube_s.addService(pg.Execute(shell="bash", command="/local/honours-project/scripts/slave.sh"))
 
 # Link link-m
