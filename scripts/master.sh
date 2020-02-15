@@ -5,6 +5,7 @@
 SCRIPTDIR=$(dirname "$0")
 WORKINGDIR='/local/repository'
 username=$(id -nu)
+HOME='/users/${username}'
 usergid=$(id -ng)
 experimentid=$(hostname|cut -d '.' -f 2)
 projectid=$usergid
@@ -18,7 +19,6 @@ exec 2>&1
 KUBEHOME="${WORKINGDIR}/kube/"
 DEPLOY_CONFIG="${WORKINGDIR}/hpa_controller/deploy/"
 mkdir -p $KUBEHOME && cd $KUBEHOME
-# TODO this file isn't in the tarball (confusion)
 export KUBECONFIG=$KUBEHOME/admin.conf
 
 cd $WORKINGDIR
@@ -38,7 +38,7 @@ echo "deb http://apt.kubernetes.io/ kubernetes-xenial main" | sudo tee -a /etc/a
 #echo "deb http://apt.kubernetes.io/ kubernetes-bionic main" | sudo tee -a /etc/apt/sources.list.d/kubernetes.list
 sudo apt-get update
 sudo apt-get -y install build-essential libffi-dev python python-dev  \
-python-pip automake autoconf libtool indent vim tmux ctags
+python-pip automake autoconf libtool indent vim tmux ctags xgrep
 
 # pre-reqs for installing docker
 sudo apt-get -y install \
@@ -71,10 +71,10 @@ sudo kubeadm init --pod-network-cidr=192.168.0.0/16
 
 # allow sN to log in with shared key
 # see http://docs.powderwireless.net/advanced-topics.html
-geni-get key > $HOME/.ssh/id_rsa
-chmod 600 $HOME/.ssh/id_rsa
-ssh-keygen -y -f $HOME/.ssh/id_rsa > $HOME/.ssh/id_rsa.pub
-grep -q -f $HOME/.ssh/id_rsa.pub $HOME/.ssh/authorized_keys || cat $HOME/.ssh/id_rsa.pub >> $HOME/.ssh/authorized_keys
+geni-get key > ${HOME}/.ssh/id_rsa
+chmod 600 ${HOME}/.ssh/id_rsa
+ssh-keygen -y -f ${HOME}/.ssh/id_rsa > ${HOME}/.ssh/id_rsa.pub
+grep -q -f ${HOME}/.ssh/id_rsa.pub ${HOME}/.ssh/authorized_keys || cat ${HOME}/.ssh/id_rsa.pub >> ${HOME}/.ssh/authorized_keys
 
 # https://github.com/kubernetes/kubernetes/issues/44665
 sudo cp /etc/kubernetes/admin.conf $KUBEHOME/
