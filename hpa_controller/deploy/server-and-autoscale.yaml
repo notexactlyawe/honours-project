@@ -29,8 +29,7 @@ spec:
         spec:
             containers:
                 - name: cpu-control
-                  image: cpu-control:latest
-                  imagePullPolicy: Never
+                  image: notexactlyawe/cpu-control:latest
                   ports:
                       - containerPort: 5000
 ---
@@ -51,8 +50,7 @@ spec:
         spec:
             containers:
                 - name: busy-worker
-                  imagePullPolicy: Never
-                  image: busy-worker:latest
+                  image: notexactlyawe/busy-worker:latest
                   resources:
                       requests:
                           cpu: "100m"
