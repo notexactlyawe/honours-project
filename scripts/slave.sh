@@ -18,7 +18,8 @@ mkdir -p $KUBEHOME && cd $KUBEHOME
 export KUBECONFIG=$KUBEHOME/admin.conf
 
 curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key add
-echo "deb http://apt.kubernetes.io/ kubernetes-bionic main" | sudo tee -a /etc/apt/sources.list.d/kubernetes.list
+sudo apt-add-repository "deb http://apt.kubernetes.io/ kubernetes-xenial main"
+echo "deb http://apt.kubernetes.io/ kubernetes-xenial main" | sudo tee -a /etc/apt/sources.list.d/kubernetes.list
 
 cd $WORKINGDIR
 #git clone git@gitlab.flux.utah.edu:licai/deepstitch.git
