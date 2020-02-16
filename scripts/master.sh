@@ -106,22 +106,17 @@ export PATH=$PATH:$GOPATH/bin
 sudo go get -u github.com/simeji/jid/cmd/jid
 sudo go build -o /usr/bin/jid github.com/simeji/jid/cmd/jid
 
-# install helm in case we needs it.
-wget https://storage.googleapis.com/kubernetes-helm/helm-v2.9.1-linux-amd64.tar.gz
-tar xf helm-v2.9.1-linux-amd64.tar.gz
+# install helm
+wget https://get.helm.sh/helm-v3.1.0-linux-amd64.tar.gz
+tar xf helm-v3.1.0-linux-amd64.tar.gz
 sudo cp linux-amd64/helm /usr/local/bin/helm
-
-helm init
-# https://docs.helm.sh/using_helm/#role-based-access-control
-kubectl create serviceaccount --namespace kube-system tiller
-kubectl create clusterrolebinding tiller-cluster-rule --clusterrole=cluster-admin --serviceaccount=kube-system:tiller
-kubectl patch deploy --namespace kube-system tiller-deploy -p '{"spec":{"template":{"spec":{"serviceAccount":"tiller"}}}}'      
-helm init --service-account tiller --upgrade
 
 source <(helm completion bash)
 
+helm repo add stable https://kubernetes-charts.storage.googleapis.com/
+
 # Install metrics-server for HPA
-helm install stable/metrics-server --name metrics-server --namespace metrics
+helm install --namespace=kube-system metrics-server stable/metrics-server -f ${WORKINGDIR}/config/metrics-server-values.yaml
 
 # Wait till the slave nodes get joined and update the kubelet daemon successfully
 # number of slaves + 1 master

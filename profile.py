@@ -140,5 +140,8 @@ link_m.addInterface(iface0)
 for i in range(params.computeNodeCount):
     link_m.addInterface(slave_ifaces[i])
 
+pool = IG.AddressPool("ext_ips", params.computeNodeCount + 1)
+request.addResource(pool)
+
 # Print the generated rspec
 pc.printRequestRSpec(request)
