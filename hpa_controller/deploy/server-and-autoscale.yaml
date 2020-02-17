@@ -53,7 +53,7 @@ spec:
                   image: notexactlyawe/busy-worker:latest
                   resources:
                       requests:
-                          cpu: "100m"
+                          cpu: "300m"
 ---
 apiVersion: autoscaling/v1
 kind: HorizontalPodAutoscaler

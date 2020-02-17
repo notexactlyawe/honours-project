@@ -2,9 +2,15 @@
 
 Repository containing any code relevant to my honours project (undergraduate thesis) at the University of Edinburgh. The project aim initially was to look at the security aspects of network slicing in the 5G core network, but is currently in a state of flux and this repository will be updated as and when the goal settles down.
 
-Each folder within this top level contains a specific experiment to do with this project and a README for that experiment.
+This repository acts as the backing repository for a POWDER profile (see the [POWDER docs][http://docs.powderwireless.net/creating-profiles.html#(part._repo-based-profiles)])).
+
+## POWDER configuration guide
+
+TODO
 
 ## Experiments
+
+The below folders each contain code for a specific experiment to do with this project and a README for that experiment.
 
 ### `replication_controller`
 

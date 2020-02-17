@@ -3,3 +3,5 @@ kind: ClusterConfiguration
 controllerManager:
   extraArgs:
     horizontal-pod-autoscaler-downscale-stabilization: "10s"
+networking:
+  podSubnet: "192.168.0.0/16"
