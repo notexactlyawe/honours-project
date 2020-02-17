@@ -18,16 +18,12 @@ exec 2>&1
 
 KUBEHOME="${WORKINGDIR}/kube"
 DEPLOY_CONFIG="${WORKINGDIR}/hpa_controller/deploy/"
-mkdir -p $KUBEHOME && cd $KUBEHOME
+mkdir -p $KUBEHOME
 export KUBECONFIG=$KUBEHOME/admin.conf
 
-cd $WORKINGDIR
-# Don't think we need to clone this
-#git clone git@gitlab.flux.utah.edu:licai/emulab-profile.git
-# Install sock shop?
-#pushd $KUBEHOME
-#git clone https://github.com/microservices-demo/microservices-demo
-#popd
+# make SSH shells play nice
+sudo chsh -s /bin/bash $username
+echo "export KUBECONFIG=${KUBECONFIG}" > $HOME/.bashrc
 
 # install kubernetes
 curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key add
@@ -64,7 +60,7 @@ sudo apt-get -y install kubelet kubeadm kubectl kubernetes-cni golang-go jq
 
 sudo docker version
 sudo swapoff -a
-sudo kubeadm init --pod-network-cidr=192.168.0.0/16
+sudo kubeadm init --config=config/kubeadm-config.yaml --pod-network-cidr=192.168.0.0/16
 
 # result will be like:  kubeadm join 155.98.36.111:6443 --token i0peso.pzk3vriw1iz06ruj --discovery-token-ca-cert-hash sha256:19c5fdee6189106f9cb5b622872fe4ac378f275a9d2d2b6de936848215847b98
 
