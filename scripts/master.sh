@@ -23,7 +23,7 @@ export KUBECONFIG=$KUBEHOME/admin.conf
 
 # make SSH shells play nice
 sudo chsh -s /bin/bash $username
-echo "export KUBECONFIG=${KUBECONFIG}" > $HOME/.bashrc
+echo "export KUBECONFIG=${KUBECONFIG}" > $HOME/.profile
 
 # install kubernetes
 curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key add
