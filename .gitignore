@@ -1,8 +1,7 @@
-data/
 free5GC-docker/
 *.un~
 *.swo
 *.swp
 __pycache__/
 venv/
-*.db
+temp.db

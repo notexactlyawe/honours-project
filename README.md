@@ -2,7 +2,7 @@
 
 Repository containing any code relevant to my honours project (undergraduate thesis) at the University of Edinburgh. The project aim initially was to look at the security aspects of network slicing in the 5G core network, but is currently in a state of flux and this repository will be updated as and when the goal settles down.
 
-This repository acts as the backing repository for a POWDER profile (see the [POWDER docs](http://docs.powderwireless.net/creating-profiles.html#\(part._repo-based-profiles\)))). If left as is, it will create an environment with the following parameters:
+This repository acts as the backing repository for a POWDER profile (see the [POWDER docs](http://docs.powderwireless.net/creating-profiles.html#\(part._repo-based-profiles\))). If left as is, it will create an environment with the following parameters:
 
  - One master node and N slave nodes (configurable in profile)
    - Can also select VM or raw PC
