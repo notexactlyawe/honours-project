@@ -1,14 +1,12 @@
 kube_description= \
 """
-IGNORE THE BELOW DESCRIPTION, COPIED FROM OTHER PROFILE
-
 This profile deploys the following components:
 1. Kubernetes, multi-node clusters using kubeadm, using docker.
+2. Kubernetes [metrics-server](https://github.com/kubernetes-sigs/metrics-server)
+3. The HPA controller experiments contained in [notexactlyawe/honours-project](https://github.com/notexactlyawe/honours-project)
 
-It takes around 5-10 minutes to complete the whole procedure.
+It takes around 10 minutes to complete the whole procedure.
    Detail about kubernetes deployment please refer to [kubernetes documentation page](https://kubernetes.io/docs/setup/independent/create-cluster-kubeadm/)
-   Detail about Sockshop microservices please refer to [sock shop demo microservice](https://microservices-demo.github.io/)
-   Detail about Jaeger tracing can be found [here](https://github.com/jaegertracing/jaeger)
 
 Out of convenience, it is also instantiated with:
 1. kubernetes dashboard installed.
@@ -18,49 +16,17 @@ Out of convenience, it is also instantiated with:
 """
 kube_instruction= \
 """
-IGNORE THE BELOW INSTRUCTIONS, COPIED FROM OTHER PROFILE
+This profile will clone [notexactlyawe/honours-project](https://github.com/notexactlyawe/honours-project) into `local/repository` on the machine and run the install scripts specified in `/local/repository/scripts`. Instructions for cloning this profile to create your own can be found at the above repository.
 
-After 5-10 minutes, the endpoint and credential will be printed at the tail of /mnt/extra/deploy.log.
-You can also print it manually using the commands below:
+The install scripts will send their output to `/local/repository/deploy.log` on both master and slave so installation can be monitored and debugged by running `tail -f /local/repository/deploy.log`.
 
-```bash
-    export KUBEHOME="/mnt/extra/kube/"
-    export KUBECONFIG=$KUBEHOME/admin.conf
-    jaeger_port=`kubectl --namespace=jaeger get svc -o go-template='{{range .items}}{{if eq .metadata.name "jaeger-query"}}{{index .spec.ports 0 "nodePort"}}{{"\n"}}{{end}}{{end}}'`
-    jaeger_endpoint=`kubectl get endpoints --all-namespaces |grep jaeger-query|awk '{print $3}'`
-    sockshop_endpoint=`kubectl get endpoints --all-namespaces |grep front-end|awk '{print $3}'`
-    dashboard_endpoint=`kubectl get endpoints --all-namespaces |grep dashboard|awk '{print $3}'`
-    dashboard_credential=`kubectl -n kube-system describe secret $(kubectl -n kube-system get secret | grep admin-user | awk '{print $1}') |grep token: | awk '{print $2}'`
+Parameters:
+ - computeNodeCount: the number of slave nodes
+ - useVMs: True - use XenVMs for nodes, False - use rawPCs (d430s)
 
-    echo "Kubernetes is ready at: http://localhost:8001/api/v1/namespaces/kube-system/services/https:kubernetes-dashboard:/proxy/#!/login"
-    echo "sockshop will be ready in 5 minutes at: http://localhost:30001"
-    echo "jaeger will be ready in 5 minutes at: http://localhost:${jaeger_port}"
-
-    # optional address
-    echo "Or, another access option (jaeger's localhost port does not work on my windows port forwarding somehow)"
-    echo "Jaeger endpoint: $jaeger_endpoint"
-    echo "sockshop endpoint: $sockshop_endpoint"
-    echo "kubernetes dashboard endpoint: $dashboard_endpoint"
-    # dashboard credential
-    echo "And this is the dashboard credential: $dashboard_credential"
-```
-
-You can find the deploy script at:
-   /mnt/extra/master.sh for master node
-   /mnt/extra/slave.sh for slave node
-
-The deployment log is kept at /mnt/extra/deploy.log
-
-###Known issues
-1. the yaml scripts of sockshop deployment is kept in the same repo as this profile, it is not mirrored with the official website. Mainly because of two reasons:
-    - there are some resource limit problem making the deployment somehow failed and I have not yet have time to find out why. I simply remove those resource limit.
-    - I plan to submit a PR of this profile to its official webpage later, but I need sometime to clean the code to make it published. But I have no time to do it yet.
-2. There is a known DNS problem in the Java microservices: even though it inheri the host node's resolv.conf with the "Cluster_first" policy, Java application in the container will directly bypass the /etc/resolv.conf and leading to in cluster domain name not found. This profile resolve it by explicitly set the resolv_conf to be empty using kubelet command line arguements (note that here involves another bug in kubernetes that using kubelet config.yaml can not make the resolv.conf as empty, simplly because when the ResolvConf=="" it will use the default which is /etc/resolv.conf).
-3. This profile uses Ubuntu 16.04 instead of 18.04 because kubernetes does not have a bionic source yet, this will be upgraded when Kubernetes bionic is ready.
-4. Sometimes the endpoint info is not generated in the deploy.log just because at the time of running, the endpoint was not really ready yet. At that time, just wait a little bit more minutes and run the commands above.
-5. The sockshop microservice seems to be not very reliable somehow sometimes.
+Known issues:
+ - The nodes don't run DHCP to get public IPs when using VMs
 """
-
 
 # Import the Portal object.
 import geni.portal as portal
@@ -70,19 +36,6 @@ import geni.rspec.pg as pg
 import geni.rspec.emulab as emulab
 import geni.rspec.igext as IG
 import geni.rspec.pg as RSpec
-
-# TODO: Is 12GB enough storage?
-
-##################### Unneeded? #########################
-# bs0 = kube_m.Blockstore('bs0', '/mnt/extra')
-# bs0.size = '200GB'
-# bs0.placement = 'NONSYSVOL'
-# kube_m.addService(pg.Install('https://gitlab.flux.utah.edu/licai/emulab-profile/raw/master/private-profiles/kubernetes/kubernetes.tar.gz','/mnt/extra/'))
-#     bs = kube_s.Blockstore('bs'+str(i), '/mnt/extra')
-    # bs.size = '200GB'
-    # bs.placement = 'NONSYSVOL'
-    # kube_s.addService(pg.Install('https://gitlab.flux.utah.edu/licai/emulab-profile/raw/master/private-profiles/kubernetes/kubernetes.tar.gz','/mnt/extra/'))
-# #########################################################
 
 # Create a portal object,
 pc = portal.Context()
