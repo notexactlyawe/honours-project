@@ -2,6 +2,18 @@
 #set -u
 #set -x
 
+deploy_hpa=false
+
+# argument parser
+while [ "$1" != "" ]; do
+    case $1 in
+        --deploy-hpa )      deploy_hpa=true
+                            ;;
+        * )                 echo "Incorrect argument $1 passed"
+    esac
+    shift
+done
+
 SCRIPTDIR=$(dirname "$0")
 WORKINGDIR='/local/repository'
 username=$(id -nu)
@@ -127,8 +139,10 @@ do
 done
 echo "All nodes joined"
 
-# install experiment deployments
-kubectl apply -f $DEPLOY_CONFIG
+if [ "$deploy_hpa" == true ] ; then
+    # install experiment deployments
+    kubectl apply -f $DEPLOY_CONFIG
+fi
 
 dashboard_endpoint=`kubectl get endpoints --all-namespaces |grep dashboard|awk '{print $3}'`
 dashboard_credential=`kubectl -n kube-system describe secret $(kubectl -n kube-system get secret | grep admin-user | awk '{print $1}') |grep token: | awk '{print $2}'`
