@@ -37,14 +37,21 @@ export KUBECONFIG=$KUBEHOME/admin.conf
 sudo chsh -s /bin/bash $username
 echo "export KUBECONFIG=${KUBECONFIG}" > $HOME/.profile
 
-# install kubernetes
+# add repositories
+# Kubernetes
 curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key add
-# this should work with 18.04 just fine
-sudo apt-add-repository "deb http://apt.kubernetes.io/ kubernetes-xenial main"
-echo "deb http://apt.kubernetes.io/ kubernetes-xenial main" | sudo tee -a /etc/apt/sources.list.d/kubernetes.list
-#sudo apt-add-repository "deb http://apt.kubernetes.io/ kubernetes-bionic main"
-#echo "deb http://apt.kubernetes.io/ kubernetes-bionic main" | sudo tee -a /etc/apt/sources.list.d/kubernetes.list
+sudo add-apt-repository "deb http://apt.kubernetes.io/ kubernetes-xenial main"
+# Docker
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+sudo add-apt-repository \
+   "deb [arch=amd64] https://download.docker.com/linux/ubuntu \
+   $(lsb_release -cs) \
+   stable"
+
+# Update apt lists
 sudo apt-get update
+
+# Install pre-reqs
 sudo apt-get -y install build-essential libffi-dev python python-dev  \
 python-pip automake autoconf libtool indent vim tmux ctags xgrep
 
@@ -55,13 +62,6 @@ sudo apt-get -y install \
     curl \
     gnupg-agent \
     software-properties-common
-
-curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
-
-sudo add-apt-repository \
-   "deb [arch=amd64] https://download.docker.com/linux/ubuntu \
-   $(lsb_release -cs) \
-   stable"
 
 # docker
 sudo apt-get -y install docker-ce docker-ce-cli containerd.io
@@ -87,25 +87,26 @@ grep -q -f ${HOME}/.ssh/id_rsa.pub ${HOME}/.ssh/authorized_keys || cat ${HOME}/.
 sudo cp /etc/kubernetes/admin.conf $KUBEHOME/
 sudo chown ${username}:${usergid} $KUBEHOME/admin.conf
 
-sudo kubectl create -f https://raw.githubusercontent.com/coreos/flannel/master/Documentation/k8s-manifests/kube-flannel-rbac.yml
-sudo kubectl create -f https://github.com/coreos/flannel/raw/master/Documentation/kube-flannel.yml
+# Install Flannel. See https://github.com/coreos/flannel
+sudo kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml
+
+# Install Multus CNI (required for oai-k8s)
+git clone https://github.com/intel/multus-cni.git
+pushd multus-cni
+kubectl apply -f images/multus-daemonset.yml
+popd
 
 # use this to enable autocomplete
 source <(kubectl completion bash)
 
 # kubectl get nodes --kubeconfig=${KUBEHOME}/admin.conf -s https://155.98.36.111:6443
 # Install dashboard: https://github.com/kubernetes/dashboard
+# TODO: why are we using this specific release? Would the latest get us anything?
 #sudo kubectl apply -f https://raw.githubusercontent.com/kubernetes/dashboard/master/src/deploy/recommended/kubernetes-dashboard.yaml
 sudo kubectl apply -f https://raw.githubusercontent.com/kubernetes/dashboard/v1.10.1/src/deploy/recommended/kubernetes-dashboard.yaml
  
 # run the proxy to make the dashboard portal accessible from outside
-sudo kubectl proxy  --kubeconfig=${KUBEHOME}/admin.conf  &
-
-# https://github.com/kubernetes/dashboard/wiki/Creating-sample-user
-#kubectl create -f $DEPLOY_CONFIG/create-cluster-role-binding-admin.yaml  
-#kubectl create -f $DEPLOY_CONFIG/create-service-account-admin-uesr-dashboard.yaml
-# to print the token, use this cmd below to paste into the browser.
-# kubectl -n kube-system describe secret $(kubectl -n kube-system get secret | grep admin-user | awk '{print $1}') |grep token: | awk '{print $2}'
+sudo kubectl proxy  --kubeconfig=${KUBEHOME}/admin.conf &
 
 # jid for json parsing.
 export GOPATH=${WORKINGDIR}/go/gopath
@@ -129,8 +130,8 @@ helm install --namespace=kube-system metrics-server stable/metrics-server -f ${W
 # Wait till the slave nodes get joined and update the kubelet daemon successfully
 # number of slaves + 1 master
 node_cnt=$(($(/local/repository/scripts/geni-get-param computeNodeCount) + 1))
-# subtract header line
-joined_cnt=$(( `kubectl get nodes |wc -l` - 1 ))
+# 1 node per line - header line
+joined_cnt=$(( `kubectl get nodes | wc -l` - 1 ))
 echo "Total nodes: $node_cnt Joined: ${joined_cnt}"
 while [ $node_cnt -ne $joined_cnt ]
 do 
