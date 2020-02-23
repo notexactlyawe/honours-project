@@ -3,11 +3,14 @@
 #set -x
 
 deploy_hpa=false
+deploy_oai=false
 
 # argument parser
 while [ "$1" != "" ]; do
     case $1 in
         --deploy-hpa )      deploy_hpa=true
+                            ;;
+        --deploy-oai )      deploy_oai=true
                             ;;
         * )                 echo "Incorrect argument $1 passed"
     esac
@@ -90,12 +93,6 @@ sudo chown ${username}:${usergid} $KUBEHOME/admin.conf
 # Install Flannel. See https://github.com/coreos/flannel
 sudo kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml
 
-# Install Multus CNI (required for oai-k8s)
-git clone https://github.com/intel/multus-cni.git
-pushd multus-cni
-kubectl apply -f images/multus-daemonset.yml
-popd
-
 # use this to enable autocomplete
 source <(kubectl completion bash)
 
@@ -143,6 +140,28 @@ echo "All nodes joined"
 if [ "$deploy_hpa" == true ] ; then
     # install experiment deployments
     kubectl apply -f $DEPLOY_CONFIG
+fi
+
+if [ "$deploy_oai" == true ] ; then
+    # Install Multus CNI
+    git clone https://github.com/intel/multus-cni.git
+    pushd multus-cni
+    kubectl apply -f images/multus-daemonset.yml
+    popd
+
+    # install kustomize
+    curl -s "https://raw.githubusercontent.com/kubernetes-sigs/kustomize/master/hack/install_kustomize.sh" | bash
+    sudo mv kustomize /usr/bin
+
+    # install static cni plugin
+    sudo go get -u github.com/containernetworking/plugins/plugins/ipam/static
+    sudo go build -o /opt/cni/bin/static github.com/containernetworking/plugins/plugins/ipam/static
+
+    # install openairinterface-k8s (modified version)
+    git clone https://github.com/notexactlyawe/openair-k8s
+    pushd openair-k8s
+    hack/run_oai_on_k8s
+    popd
 fi
 
 dashboard_endpoint=`kubectl get endpoints --all-namespaces |grep dashboard|awk '{print $3}'`

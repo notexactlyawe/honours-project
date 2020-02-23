@@ -47,6 +47,8 @@ pc.defineParameter("useVMs", "Use virtual machines (true) or raw PCs (false)",
                    portal.ParameterType.BOOLEAN, True)
 pc.defineParameter("deployHPAExperiment", "Deploy HPA experiment",
                    portal.ParameterType.BOOLEAN, True)
+pc.defineParameter("deployOAI", "Deploy openairinterface-k8s",
+                   portal.ParameterType.BOOLEAN, True)
 params = pc.bindParameters()
 
 # Create a Request object to start building the RSpec.
@@ -71,10 +73,14 @@ else:
 kube_m.disk_image = 'urn:publicid:IDN+emulab.net+image+emulab-ops:UBUNTU18-64-STD'
 kube_m.Site('Site 1')
 iface0 = kube_m.addInterface('interface-0')
+
+master_command = "/local/repository/scripts/master.sh"
 if params.deployHPAExperiment:
-    kube_m.addService(pg.Execute(shell="bash", command="/local/repository/scripts/master.sh --deploy-hpa"))
-else:
-    kube_m.addService(pg.Execute(shell="bash", command="/local/repository/scripts/master.sh"))
+    master_command += " --deploy-hpa"
+if params.deployOAI:
+    master_command += " --deploy-oai"
+
+kube_m.addService(pg.Execute(shell="bash", command=master_command))
 
 slave_ifaces = []
 for i in range(1,params.computeNodeCount+1):
