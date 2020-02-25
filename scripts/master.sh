@@ -112,6 +112,10 @@ export PATH=$PATH:$GOPATH/bin
 sudo go get -u github.com/simeji/jid/cmd/jid
 sudo go build -o /usr/bin/jid github.com/simeji/jid/cmd/jid
 
+# install static cni plugin
+sudo go get -u github.com/containernetworking/plugins/plugins/ipam/static
+sudo go build -o /opt/cni/bin/static github.com/containernetworking/plugins/plugins/ipam/static
+
 # install helm
 wget https://get.helm.sh/helm-v3.1.0-linux-amd64.tar.gz
 tar xf helm-v3.1.0-linux-amd64.tar.gz
@@ -152,10 +156,6 @@ if [ "$deploy_oai" == true ] ; then
     # install kustomize
     curl -s "https://raw.githubusercontent.com/kubernetes-sigs/kustomize/master/hack/install_kustomize.sh" | bash
     sudo mv kustomize /usr/bin
-
-    # install static cni plugin
-    sudo go get -u github.com/containernetworking/plugins/plugins/ipam/static
-    sudo go build -o /opt/cni/bin/static github.com/containernetworking/plugins/plugins/ipam/static
 
     # install openairinterface-k8s (modified version)
     git clone https://github.com/notexactlyawe/openair-k8s

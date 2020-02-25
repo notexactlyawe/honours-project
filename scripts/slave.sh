@@ -71,6 +71,10 @@ sudo sed -i 's#Environment="KUBELET_CONFIG_ARGS=--config=/var/lib/kubelet/config
 sudo systemctl daemon-reload 
 sudo systemctl restart kubelet.service
 
+# install static cni plugin
+sudo go get -u github.com/containernetworking/plugins/plugins/ipam/static
+sudo go build -o /opt/cni/bin/static github.com/containernetworking/plugins/plugins/ipam/static
+
 # if it complains that "[ERROR Port-10250]: Port 10250 is in use", kill the process.
 # if it complains some file already exist, remove those. [ERROR FileAvailable--etc-kubernetes-pki-ca.crt]: /etc/kubernetes/pki/ca.crt already exists
 
