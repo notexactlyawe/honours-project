@@ -17,6 +17,10 @@ KUBEHOME="${WORKINGDIR}/kube/"
 mkdir -p $KUBEHOME && cd $KUBEHOME
 export KUBECONFIG=$KUBEHOME/admin.conf
 
+# make SSH shells play nice
+sudo chsh -s /bin/bash $username
+echo "export KUBECONFIG=${KUBECONFIG}" > $HOME/.profile
+
 curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key add
 sudo apt-add-repository "deb http://apt.kubernetes.io/ kubernetes-xenial main"
 echo "deb http://apt.kubernetes.io/ kubernetes-xenial main" | sudo tee -a /etc/apt/sources.list.d/kubernetes.list
@@ -72,6 +76,9 @@ sudo systemctl daemon-reload
 sudo systemctl restart kubelet.service
 
 # install static cni plugin
+export GOPATH=${WORKINGDIR}/go/gopath
+mkdir -p $GOPATH
+export PATH=$PATH:$GOPATH/bin
 sudo go get -u github.com/containernetworking/plugins/plugins/ipam/static
 sudo go build -o /opt/cni/bin/static github.com/containernetworking/plugins/plugins/ipam/static
 
