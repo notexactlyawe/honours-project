@@ -160,6 +160,9 @@ if [ "$deploy_oai" == true ] ; then
     # install openairinterface-k8s (modified version)
     git clone https://github.com/notexactlyawe/openair-k8s
     pushd openair-k8s
+    # generate certs for HSS/MME
+    hack/generate_certs -p hss -d manifests/oai-hss/certs oai-hss.oai.svc.cluster.local
+    hack/generate_certs -p mme -d manifests/oai-mme/certs oai-mme.oai.svc.cluster.local
     hack/run_oai_on_k8s
     popd
 fi
