@@ -4,7 +4,7 @@
 # deploy sgx on emulab
 SCRIPTDIR=$(dirname "$0")
 WORKINGDIR='/local/repository'
-username=$(id -u)
+username=$(id -un)
 HOME=/users/$(id -un)
 usergid=$(id -g)
 

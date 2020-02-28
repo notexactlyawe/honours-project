@@ -66,6 +66,7 @@ if params.useVMs:
     kube_m = request.XenVM('m')
     kube_m.cores = 4
     kube_m.ram = 1024 * 8
+    kube_m.routable_control_ip = True
 else:
     kube_m = request.RawPC('m')
     kube_m.hardware_type = 'd430'
@@ -88,6 +89,7 @@ for i in range(1,params.computeNodeCount+1):
         kube_s = request.XenVM('s'+str(i))
         kube_s.cores = 4
         kube_s.ram = 1024 * 8
+        kube_s.routable_control_ip = True
     else:
         kube_s = request.RawPC('s'+str(i))
         kube_s.hardware_type = 'd430'
@@ -103,10 +105,6 @@ link_m.Site('undefined')
 link_m.addInterface(iface0)
 for i in range(params.computeNodeCount):
     link_m.addInterface(slave_ifaces[i])
-
-if params.useVMs:
-    pool = IG.AddressPool("ext_ips", params.computeNodeCount + 1)
-    request.addResource(pool)
 
 # Print the generated rspec
 pc.printRequestRSpec(request)
