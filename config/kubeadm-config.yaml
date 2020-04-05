@@ -3,5 +3,8 @@ kind: ClusterConfiguration
 controllerManager:
   extraArgs:
     horizontal-pod-autoscaler-downscale-stabilization: "10s"
+apiServer:
+  extraArgs:
+    feature-gates: SCTPSupport=true
 networking:
   podSubnet: "10.244.0.0/16"
