@@ -10,8 +10,10 @@ import signal
 
 HEARTBEAT_PERIOD = 3 #s
 
-host = os.environ['CPUCONTROL_SERVICE_HOST']
-port = os.environ['CPUCONTROL_SERVICE_PORT']
+service_name = os.environ.get("SERVICE_NAME", "CPUCONTROL")
+
+host = os.environ[f"{service_name}_SERVICE_HOST"]
+port = os.environ[f"{service_name}_SERVICE_PORT"]
 
 startup_url = f"http://{host}:{port}/startup"
 heartbeat_url = f"http://{host}:{port}/heartbeat"
