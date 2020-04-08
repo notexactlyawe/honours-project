@@ -1,7 +1,7 @@
 CONTROLLER=/local/repository/hpa_controller
 cd $CONTROLLER
 
-kubectl deploy -f deploy-w-load
+kubectl apply -f deploy-w-load
 
 sudo apt install -y at
 
