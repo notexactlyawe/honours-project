@@ -23,9 +23,9 @@ The install scripts will send their output to `/local/repository/deploy.log` on 
 Parameters:
  - computeNodeCount: the number of slave nodes
  - useVMs: True - use XenVMs for nodes, False - use rawPCs (d430s)
-
-Known issues:
- - The nodes don't run DHCP to get public IPs when using VMs
+ - nodeType: The type of node to use
+ - deployHPAExperiment: Whether or not to deploy the files in `hpa_controller/deploy`
+ - deployOAI: Whether to deploy the `openair-k8s` project or not
 """
 
 # Import the Portal object.
@@ -45,6 +45,7 @@ pc.defineParameter("computeNodeCount", "Number of slave/compute nodes",
                    portal.ParameterType.INTEGER, 1)
 pc.defineParameter("useVMs", "Use virtual machines (true) or raw PCs (false)",
                    portal.ParameterType.BOOLEAN, True)
+pc.defineParameter("nodeType", "Type of node to use", portal.ParameterType.NODETYPE, "d430")
 pc.defineParameter("deployHPAExperiment", "Deploy HPA experiment",
                    portal.ParameterType.BOOLEAN, True)
 pc.defineParameter("deployOAI", "Deploy openairinterface-k8s",
@@ -69,7 +70,7 @@ if params.useVMs:
     kube_m.routable_control_ip = True
 else:
     kube_m = request.RawPC('m')
-    kube_m.hardware_type = 'd430'
+    kube_m.hardware_type = params.nodeType
 # kube_m.disk_image = 'urn:publicid:IDN+emulab.net+image+emulab-ops:UBUNTU16-64-STD'
 kube_m.disk_image = 'urn:publicid:IDN+emulab.net+image+emulab-ops:UBUNTU18-64-STD'
 kube_m.Site('Site 1')
@@ -92,7 +93,7 @@ for i in range(1,params.computeNodeCount+1):
         kube_s.routable_control_ip = True
     else:
         kube_s = request.RawPC('s'+str(i))
-        kube_s.hardware_type = 'd430'
+        kube_s.hardware_type = params.nodeType
     # kube_s.disk_image = 'urn:publicid:IDN+emulab.net+image+emulab-ops:UBUNTU16-64-STD'
     kube_s.disk_image = 'urn:publicid:IDN+emulab.net+image+emulab-ops:UBUNTU18-64-STD'
     kube_s.Site('Site 1')
